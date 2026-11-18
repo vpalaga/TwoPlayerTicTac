@@ -1,6 +1,6 @@
 from Player import Player
 
-player = Player(is_host=False)
+player = Player(is_host=False, ip="localhost")
 while True:
     player.pygame.update()
     mv = player.pygame.click()      # always read events, even on the opponent's turn

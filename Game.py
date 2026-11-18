@@ -62,6 +62,7 @@ class Playground:
         return c
 
     def check_for_wins(self)->None|tuple[tuple[int,int],tuple[int,int]]:
+        """if there is a win, give the start and end of the line"""
         check_directions = [(1, 0), (0,1), (1, 1), (-1, 1)]
         for y in range(self.size[1]):
             for x in range(self.size[0]):

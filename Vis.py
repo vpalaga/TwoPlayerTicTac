@@ -11,13 +11,16 @@ class Graphic:
 
         self.fps = 60
         self.fpsClock = pygame.time.Clock()
-
         self.play = playground
 
         self.width, self.height = playground.pixels
         self.size = self.play.size
+
         self.screen = pygame.display.set_mode((self.width, self.height))
-        pygame.display.set_caption(str(player_num))
+
+        self.caption:str = "host" if player_num == 0 else "client"
+        pygame.display.set_caption(self.caption)
+
         self.my_font = pygame.font.SysFont('Comic Sans MS', round(self.play.yField * 0.5))
 
     def grid(self):
@@ -31,25 +34,23 @@ class Graphic:
         self.screen.fill((210, 210, 210))
         self.grid()
 
-        for y in range(self.size[1]):
-            for x in range(self.size[0]):
-                if self.play.state[(x, y)] is not None:
-
-                    match self.play.state[(x, y)]:
-                        case 0:
-                            pygame.draw.circle(self.screen, (255,0,0), self.play.mid_pos[x, y], self.play.xField * 0.4)
-                        case 1:
-                            # draw x
-                            os = self.play.xField * 0.35
-                            mid = Pos(*self.play.mid_pos[x, y])
-                            pygame.draw.line(self.screen, color="Blue",
-                                             start_pos=(mid.x - os, mid.y + os),
-                                             end_pos=(mid.x + os, mid.y - os),
-                                             width=5)
-                            pygame.draw.line(self.screen, color="Blue",
-                                             start_pos=(mid.x + os, mid.y + os),
-                                             end_pos=(mid.x - os, mid.y - os),
-                                             width=5)
+        for (x,y), field in self.play.state.items():
+            if field is not None:
+                match field:
+                    case 0:
+                        pygame.draw.circle(self.screen, (255,0,0), self.play.mid_pos[x, y], self.play.xField * 0.4)
+                    case 1:
+                        # draw x
+                        os = self.play.xField * 0.35
+                        mid = Pos(*self.play.mid_pos[x, y])
+                        pygame.draw.line(self.screen, color="Blue",
+                                         start_pos=(mid.x - os, mid.y + os),
+                                         end_pos=(mid.x + os, mid.y - os),
+                                         width=5)
+                        pygame.draw.line(self.screen, color="Blue",
+                                         start_pos=(mid.x + os, mid.y + os),
+                                         end_pos=(mid.x - os, mid.y - os),
+                                         width=5)
 
     def click(self) -> None | Pos:
         for event in pygame.event.get():
@@ -68,15 +69,16 @@ class Graphic:
             mov = self.click()
         return mov
 
-    def handle_win(self, start_end)-> None:
-        print("s-------------------------")
-        print(start_end)
-        pygame.draw.line(self.screen, (70,70,70),self.play.mid_pos[start_end[0]], self.play.mid_pos[start_end[1]], width=10)
+    def handle_win(self, start:tuple[int,int], end:tuple[int,int])-> None:
+        pygame.draw.line(self.screen, (70,70,70),self.play.mid_pos[start], self.play.mid_pos[end], width=10)
 
     def update(self):
         self.draw()
         pygame.display.flip()
         self.fpsClock.tick(self.fps)
+    @staticmethod
+    def flip():
+        pygame.display.flip()
 
 if __name__ == "__main__":
     play = Playground((16,16), (800,800))
